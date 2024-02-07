@@ -1,0 +1,8 @@
+Metadata-Version: 2.1
+Name: movie_recom
+Version: 0.0.0
+Summary: package description
+Requires-Dist: tqdm>=4.62.2
+Requires-Dist: Levenshtein
+Requires-Dist: sentence-transformers
+Requires-Dist: colorama
