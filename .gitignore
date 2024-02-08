@@ -11,6 +11,8 @@ __MACOSX
 # Jupiter Notebook #
 .pytest_cache
 __pycache__
+*/__pycache__
+*.pyc
 *checkpoint.ipynb
 *.ipynb_checkpoints
 
