@@ -11,7 +11,9 @@ __MACOSX
 # Jupiter Notebook #
 .pytest_cache
 __pycache__
-*/__pycache__
+movie_recom/__pycache__
+movie_recom/interface/__pycache__
+movie_recom/ml_logic/__pycache__
 *.pyc
 *checkpoint.ipynb
 *.ipynb_checkpoints
