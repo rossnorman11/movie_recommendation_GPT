@@ -16,9 +16,12 @@ def embed_data():
     load the data and shorten the synopsis
     embed the data
     """
+    # get the data from data.get_raw_data
     df = get_raw_data()
     # Process data
+    # shorten the synopsis with preprocessor.shorten_synopsis
     df = shorten_synopsis(max_len=500, df=df)
+    # embed the synopsis with encoders.mini_lm_encode
     df_embedded = mini_lm_encode(df)
     save_embedded_data(df_embedded)
 
@@ -26,18 +29,25 @@ def embed_prompt() -> pd.DataFrame:
     """
     embed the prompt
     """
+    #right now the prompt is hardcoded
     prompt = "drug addict in america looking for work"
+    #put it into a dataframe
     prompt_df = pd.DataFrame({'title': ['prompt'], 'plot_synopsis': [prompt]})
+    #embed the prompt with encoders.mini_lm_encode
     prompt_embedded = mini_lm_encode(prompt_df)
     return prompt_embedded
 
 def recommend() -> list:
+    '''
+    get the prompt and recommend movies based on it
+    '''
     # get the embedded prompt
     prompt_embedded = embed_prompt()
 
     # get the embedded data
     df_embedded = get_embedded_data()
 
+    # find the nearest neighbors with model.find_n_nearest_neighbors
     recom_list = find_n_nearest_neighbors(n=5, prompt_embedded=prompt_embedded, df_embedded=df_embedded)
     print(recom_list)
     return recom_list
