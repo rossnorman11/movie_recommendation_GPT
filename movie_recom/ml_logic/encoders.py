@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 from sentence_transformers import SentenceTransformer
+from movie_recom.ml_logic.data import save_processed_data
 
 def mini_lm_encode(df: pd.DataFrame) -> pd.DataFrame:
     '''
@@ -26,4 +27,6 @@ def mini_lm_encode(df: pd.DataFrame) -> pd.DataFrame:
     df_encoded.index = df_index
     # remove the index name (title of the index column)
     df_encoded.index.name = None
+    save_processed_data(df_encoded, 'data_embedded.csv')
+    save_processed_data(df_index, 'data_titelnames.csv')
     return df_encoded

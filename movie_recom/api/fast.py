@@ -31,7 +31,7 @@ def predict(
 def root():
     return {"message": "Welcome to the MovieRecommendation API"}
 
-# Define a root `/` endpoint
-@app.get('/')
-def index():
-    return {'ok': True}
+# # Define a root `/` endpoint
+# @app.get('/')
+# def index():
+#     return {'ok': True}
