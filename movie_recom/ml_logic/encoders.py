@@ -17,4 +17,5 @@ def mini_lm_encode(df: pd.DataFrame) -> pd.DataFrame:
     df_encoded = df_encoded[['plot_synopsis']]
     df_encoded = pd.DataFrame(np.column_stack(list(zip(*df_encoded.values))))
     df_encoded.index = df_index
+    df_encoded.index.name = None
     return df_encoded
