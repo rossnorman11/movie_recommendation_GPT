@@ -5,7 +5,7 @@ from pathlib import Path
 from colorama import Fore, Style
 
 from movie_recom.params import *
-from movie_recom.ml_logic.encoders import mini_lm_encode
+from movie_recom.ml_logic.encoders import mini_lm_encode, bert_encode
 from movie_recom.ml_logic.data import get_raw_data, get_embedded_data, save_embedded_data
 from movie_recom.ml_logic.model import find_n_nearest_neighbors
 from movie_recom.ml_logic.preprocessor import shorten_synopsis
@@ -22,8 +22,13 @@ def embed_data():
     # Process data
     # shorten the synopsis with preprocessor.shorten_synopsis
     df = shorten_synopsis(max_len=500, df=df)
+
     # embed the synopsis with encoders.mini_lm_encode
-    df_embedded = mini_lm_encode(df)
+    #df_embedded = mini_lm_encode(df)
+
+    # embed the synopsis with encoders.bert_encode
+    df_embedded = bert_encode(df)
+
     save_embedded_data(df_embedded)
 
 def embed_prompt(prompt: str) -> pd.DataFrame:
@@ -33,10 +38,14 @@ def embed_prompt(prompt: str) -> pd.DataFrame:
     #put it into a dataframe
     prompt_df = pd.DataFrame({'title': ['prompt'], 'plot_synopsis': [prompt]})
     #embed the prompt with encoders.mini_lm_encode
-    prompt_embedded = mini_lm_encode(prompt_df)
+    #prompt_embedded = mini_lm_encode(prompt_df)
+
+    #embed the prompt with encoders.bert_encode
+    prompt_embedded = bert_encode(prompt_df)
+
     return prompt_embedded
 
-def recommend(prompt: str, n_neighbors: int) -> list:
+def recommend(prompt: str="love story in London", n_neighbors: int = 5) -> list:
     '''
     get the prompt and recommend movies based on it
     '''
