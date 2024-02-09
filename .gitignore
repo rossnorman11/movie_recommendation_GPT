@@ -18,7 +18,7 @@ movie_recom/api/__pycache__
 *.pyc
 *checkpoint.ipynb
 *.ipynb_checkpoints
-
+movie_recom/notebooks/test.ipynb
 # inteliJ #
 .idea
 *.gz
