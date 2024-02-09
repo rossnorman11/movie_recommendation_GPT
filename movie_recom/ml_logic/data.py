@@ -14,12 +14,12 @@ def get_raw_data() -> pd.DataFrame:
     print("✅ get_data() done \n")
     return df
 
-def save_embedded_data(df: pd.DataFrame) -> None:
+def save_processed_data(df: pd.DataFrame, filename: str) -> None:
     '''saves the embedded data to the hard drive'''
     # Get the parent folder of the current file (goes up 2 levels)
     parent_folder_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
     # Define the path and foldername to save the data
-    embedded_data_path = Path(parent_folder_path).joinpath("processed_data/data_embedded.csv")
+    embedded_data_path = Path(parent_folder_path).joinpath(f"processed_data/{filename}")
     # save our data
     df.to_csv(embedded_data_path, index=True)
     print("✅ save_data() done \n")
