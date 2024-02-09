@@ -11,6 +11,6 @@ recommendation:
 	python -c 'from movie_recom.interface.main import recommend; recommend()'
 
 run_api:
-	uvicorn taxifare.api.fast:app --reload
+	uvicorn movie_recom.api.fast:app --reload
 
 run_all: embedding recommendation

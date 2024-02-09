@@ -4,6 +4,7 @@ from movie_recom.params import *
 from pathlib import Path
 
 def get_raw_data() -> pd.DataFrame:
+    '''loads the raw data from the mpst_full_data.csv file from hard drive'''
     # Get the parent folder of the current file (goes up 2 levels)
     parent_folder_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
     # path and filename for data in movie_recommendation_GPT folder
@@ -14,6 +15,7 @@ def get_raw_data() -> pd.DataFrame:
     return df
 
 def save_embedded_data(df: pd.DataFrame) -> None:
+    '''saves the embedded data to the hard drive'''
     # Get the parent folder of the current file (goes up 2 levels)
     parent_folder_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
     # Define the path and foldername to save the data
@@ -23,6 +25,7 @@ def save_embedded_data(df: pd.DataFrame) -> None:
     print("✅ save_data() done \n")
 
 def get_embedded_data() -> pd.DataFrame:
+    '''loads the embedded data from the data_embedded.csv file from hard drive'''
     # Get the parent folder of the current file (goes up 2 levels)
     parent_folder_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
     # path and filename for data in movie_recommendation_GPT folder
