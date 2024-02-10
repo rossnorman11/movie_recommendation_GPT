@@ -3,7 +3,6 @@ import pandas as pd
 # import embedding with sentence transformer
 from sentence_transformers import SentenceTransformer
 
-from movie_recom.ml_logic.data import save_processed_data
 
 # import embedding with bert
 from transformers import AutoTokenizer, TFAutoModel
@@ -33,9 +32,7 @@ def mini_lm_encode(df: pd.DataFrame) -> pd.DataFrame:
     df_encoded.index = df_index
     # remove the index name (title of the index column)
     df_encoded.index.name = None
-    save_processed_data(df_encoded, 'data_embedded.csv')
-    save_processed_data(df_index, 'data_titelnames.csv')
-    return df_encoded
+    return df_encoded, df_index
 
 def bert_encode(df: pd.DataFrame) -> pd.DataFrame:
     '''
@@ -74,5 +71,4 @@ def bert_encode(df: pd.DataFrame) -> pd.DataFrame:
     embedded_data.index = df_index
     # remove the index name (title of the index column)
     embedded_data.index.name = None
-
-    return embedded_data
+    return embedded_data, df_index

@@ -1,9 +1,20 @@
 import pandas as pd
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from movie_recom.interface.main import recommend
+from movie_recom.interface.main import embed_prompt
+from pathlib import Path
+from movie_recom.params import *
+import pickle
 
 app = FastAPI()
+#load pickle model
+# Get the parent folder of the current file (goes up 2 levels)
+parent_folder_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+# Define the path and foldername to save the data
+model_path = Path(parent_folder_path).joinpath("saved_models/nbrs.pkl")
+with open(model_path, 'rb') as f:
+    app.state.model = pickle.load(f)
+
 
 # Allowing all middleware is optional, but good practice for dev purposes
 app.add_middleware(
@@ -23,8 +34,17 @@ def predict(
     """
     gives a list of n_recom recommendations based on the prompt
     """
-    recom_list = recommend(prompt, n_recom)
-    return {"Our recommendation is": recom_list}
+    prompt_embedded = embed_prompt(prompt)
+    distances, indices = app.state.model.kneighbors(prompt_embedded, n_neighbors=n_recom)
+
+    # generate output list
+    # load list of titles
+    filepath = Path(PARENT_FOLDER_PATH).joinpath("processed_data/data_titlenames.csv")
+    df_titles = pd.read_csv(filepath, index_col=0)
+    list_of_titles = []
+    for index in indices[0][0:]:
+        list_of_titles.append(df_titles.iloc[index][0])
+    return {"Our recommendation is": list_of_titles}
 
 
 @app.get("/")

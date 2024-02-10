@@ -7,8 +7,11 @@ reinstall_package:
 embedding:
 	python -c 'from movie_recom.interface.main import embed_data; embed_data()'
 
+fit_model:
+	python -c 'from movie_recom.interface.main import fit_model; fit_model()'
+
 recommendation:
-	python -c 'from movie_recom.interface.main import recommend; recommend()'
+	python -c 'from movie_recom.interface.main import predict; predict()'
 
 run_api:
 	uvicorn movie_recom.api.fast:app --reload
@@ -16,4 +19,4 @@ run_api:
 call_api:
 	python -c 'from movie_recom.interface.main import call_api; call_api()'
 
-run_all: embedding recommendation
+run_all: embedding fit_model recommendation

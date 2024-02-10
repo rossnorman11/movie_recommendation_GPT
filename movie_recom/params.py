@@ -12,6 +12,8 @@ BQ_DATASET = os.environ.get("BQ_DATASET")
 BQ_REGION = os.environ.get("BQ_REGION")
 BUCKET_NAME = os.environ.get("BUCKET_NAME")
 INSTANCE = os.environ.get("INSTANCE")
+# Get the parent folder of the current file (goes up 2 levels)
+PARENT_FOLDER_PATH = os.path.dirname(os.path.dirname(__file__))
 
 
 ##################  CONSTANTS  #####################

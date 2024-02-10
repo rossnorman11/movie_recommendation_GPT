@@ -1,10 +1,9 @@
 tqdm>=4.62.2
-#Levenshtein
 sentence-transformers
 transformers
 colorama
 pandas
-sklearn
+scikit-learn
 
 # API
 fastapi         # API framework
