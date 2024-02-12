@@ -5,6 +5,7 @@ TensorFlow  # necessary?
 colorama
 pandas
 scikit-learn
+python-multipart
 
 # API
 fastapi         # API framework

@@ -1,7 +1,7 @@
 import pandas as pd
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from movie_recom.interface.main import embed_prompt
+from movie_recom.interface.main import embed_prompt, merge_promt_with_favorits
 from pathlib import Path
 from movie_recom.params import *
 import pickle
@@ -29,13 +29,17 @@ app.add_middleware(
 @app.get("/predict")
 def predict(
         prompt: str = "drug addict in america looking for work", # prompt
-        n_recom: int = 5 # number of recommendations
+        n_recom: int = 5, # number of recommendations
+        fav_list: list = [] # list of favorite movies
     ):
     """
     gives a list of n_recom recommendations based on the prompt
     """
     prompt_embedded = embed_prompt(prompt)
-    distances, indices = app.state.model.kneighbors(prompt_embedded, n_neighbors=n_recom)
+    final_prompt_embedded = prompt_embedded
+    if len(fav_list) > 0:
+        final_prompt_embedded = merge_promt_with_favorits(prompt_embedded, fav_list)
+    distances, indices = app.state.model.kneighbors(final_prompt_embedded, n_neighbors=n_recom)
 
     # generate output list
     # load list of titles

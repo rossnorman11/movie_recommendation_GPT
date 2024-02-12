@@ -10,7 +10,7 @@ embedding:
 fit_model:
 	python -c 'from movie_recom.interface.main import fit_model; fit_model()'
 
-recommendation:
+prediction:
 	python -c 'from movie_recom.interface.main import predict; predict()'
 
 run_api:
@@ -19,4 +19,4 @@ run_api:
 call_api:
 	python -c 'from movie_recom.interface.main import call_api; call_api()'
 
-run_all: embedding fit_model recommendation
+run_all: embedding fit_model prediction
