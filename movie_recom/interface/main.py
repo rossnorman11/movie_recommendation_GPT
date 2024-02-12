@@ -24,6 +24,7 @@ def embed_data():
     df = shorten_synopsis(max_len=500, df=df)
     # embed the synopsis with encoders and saves it
 
+
     if EMBEDDING_TYPE == 'mini':
         df_encoded, df_index = mini_lm_encode(df)
     elif EMBEDDING_TYPE == 'bert':
@@ -40,6 +41,7 @@ def embed_prompt(prompt: str) -> pd.DataFrame:
     #put it into a dataframe
     prompt_df = pd.DataFrame({'title': ['prompt'], 'plot_synopsis': [prompt]})
 
+
     #embed the prompt with encoders
     if EMBEDDING_TYPE == 'mini':
         prompt_embedded, df_index = mini_lm_encode(prompt_df)
@@ -48,6 +50,11 @@ def embed_prompt(prompt: str) -> pd.DataFrame:
         prompt_embedded, df_index = bert_encode(prompt_df)
         return prompt_embedded
 
+
+def merge_promt_with_favorits(prompt: str, favs: list) -> pd.DataFrame:
+    prompt_embedded = embed_prompt(prompt)
+    df = get_data("processed_data/data_embedded_bert.csv")
+    df_filtered = df[df['title'].isin(favs)]
 
 
 def fit_model(n_neighbors: int = 10):
