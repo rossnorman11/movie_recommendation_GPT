@@ -24,14 +24,14 @@ def embed_data():
     df = shorten_synopsis(max_len=500, df=df)
     # embed the synopsis with encoders and saves it
 
-
     if EMBEDDING_TYPE == 'mini':
         df_encoded, df_index = mini_lm_encode(df)
+        save_data(df_encoded, 'processed_data/data_mini_embedded.csv')
+        save_data(df_index, 'processed_data/data_titlenames.csv')
     elif EMBEDDING_TYPE == 'bert':
         df_encoded, df_index = bert_encode(df)
-
-    save_data(df_encoded, 'processed_data/data_embedded.csv')
-    save_data(df_index, 'processed_data/data_titlenames.csv')
+        save_data(df_encoded, 'processed_data/data_bert_embedded.csv')
+        save_data(df_index, 'processed_data/data_titlenames.csv')
 
 
 def embed_prompt(prompt: str) -> pd.DataFrame:
@@ -51,26 +51,33 @@ def embed_prompt(prompt: str) -> pd.DataFrame:
         return prompt_embedded
 
 
-def merge_promt_with_favorits(prompt: str, favs: list) -> pd.DataFrame:
-    prompt_embedded = embed_prompt(prompt)
-    df = get_data("processed_data/data_embedded_bert.csv")
-    df_filtered = df[df['title'].isin(favs)]
+def merge_promt_with_favorits(prompt_embedded: pd.DataFrame, favs: list) -> pd.DataFrame:
+    # get the embedded data
+    if EMBEDDING_TYPE == 'mini':
+        df_embedded = get_data('processed_data/data_mini_embedded.csv')
+        df_filtered = df_embedded[df_embedded.index.isin(favs)] # embedded dataframe with just the favorites
+        series = prompt_embedded.iloc[0,:] # convert the prompt dataframe to a series
+        df_filtered.loc['prompt'] = series.to_list() # add the prompt to the dataframe (concat didnt work well)
+        mean_df = df_filtered.mean(axis=0).to_frame().T # get the mean of the dataframe, keep it as dataframe
+        mean_df.index = ['prompt'] # set the index to 'prompt'
+        return mean_df
+    return prompt_embedded
 
 
 def fit_model(n_neighbors: int = 10):
     '''
     fit the model
     '''
+
     if EMBEDDING_TYPE == 'mini':
         # get the embedded data
-        df_embedded = get_data("processed_data/data_embedded.csv")
-
+        df_embedded = get_data("processed_data/data_mini_embedded.csv")
+        fit_n_nearest_neighbors(n=n_neighbors, df_embedded=df_embedded)
     if EMBEDDING_TYPE == 'bert':
         # get the embedded data
-        df_embedded = get_data("processed_data/")
-    # fit the model with model.fit_n_nearest_neighbors
-
-    fit_n_nearest_neighbors(n=n_neighbors, df_embedded=df_embedded)
+        df_embedded = get_data("processed_data/data_bert_embedded.csv")
+        # fit the model with model.fit_n_nearest_neighbors
+        fit_n_nearest_neighbors(n=n_neighbors, df_embedded=df_embedded)
 
 def predict(prompt: str = 'godfather movie with a lot of action', n_neighbors: int = 5) -> list:
 
