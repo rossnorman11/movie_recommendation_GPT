@@ -14,7 +14,8 @@ BUCKET_NAME = os.environ.get("BUCKET_NAME")
 INSTANCE = os.environ.get("INSTANCE")
 # Get the parent folder of the current file (goes up 2 levels)
 PARENT_FOLDER_PATH = os.path.dirname(os.path.dirname(__file__))
-
+EMBEDDING_TYPE = os.environ.get("EMBEDDING_TYPE")
+SEARCH_TYPE = os.environ.get("SEARCH_TYPE")
 
 ##################  CONSTANTS  #####################
 LOCAL_DATA_PATH = os.path.join(os.path.expanduser('~'), ".lewagon", "project")

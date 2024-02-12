@@ -2,11 +2,10 @@ import numpy as np
 import pandas as pd
 # import embedding with sentence transformer
 from sentence_transformers import SentenceTransformer
-
-
 # import embedding with bert
 from transformers import AutoTokenizer, TFAutoModel
-
+# import embedding with tfidf
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 def mini_lm_encode(df: pd.DataFrame) -> pd.DataFrame:
     '''
@@ -32,6 +31,7 @@ def mini_lm_encode(df: pd.DataFrame) -> pd.DataFrame:
     df_encoded.index = df_index
     # remove the index name (title of the index column)
     df_encoded.index.name = None
+
     return df_encoded, df_index
 
 def bert_encode(df: pd.DataFrame) -> pd.DataFrame:
@@ -71,4 +71,5 @@ def bert_encode(df: pd.DataFrame) -> pd.DataFrame:
     embedded_data.index = df_index
     # remove the index name (title of the index column)
     embedded_data.index.name = None
+
     return embedded_data, df_index
