@@ -7,7 +7,7 @@ from colorama import Fore, Style
 from movie_recom.params import *
 from movie_recom.ml_logic.encoders import mini_lm_encode, bert_encode
 from movie_recom.ml_logic.data import get_data, save_data
-from movie_recom.ml_logic.model import fit_n_nearest_neighbors, predict_n_nearest_neighbors
+from movie_recom.ml_logic.model import fit_n_nearest_neighbors, predict_n_nearest_neighbors, compute_cosine_sim
 from movie_recom.ml_logic.preprocessor import shorten_synopsis
 import requests
 
@@ -23,7 +23,13 @@ def embed_data():
     # shorten the synopsis with preprocessor.shorten_synopsis
     df = shorten_synopsis(max_len=500, df=df)
     # embed the synopsis with encoders and saves it
-    df_encoded, df_index = bert_encode(df)
+
+
+    if EMBEDDING_TYPE == 'mini':
+        df_encoded, df_index = mini_lm_encode(df)
+    elif EMBEDDING_TYPE == 'bert':
+        df_encoded, df_index = bert_encode(df)
+
     save_data(df_encoded, 'processed_data/data_embedded.csv')
     save_data(df_index, 'processed_data/data_titlenames.csv')
 
@@ -34,9 +40,16 @@ def embed_prompt(prompt: str) -> pd.DataFrame:
     """
     #put it into a dataframe
     prompt_df = pd.DataFrame({'title': ['prompt'], 'plot_synopsis': [prompt]})
-    #embed the prompt with encoders.mini_lm_encode
-    prompt_embedded, df_index = bert_encode(prompt_df)
-    return prompt_embedded
+
+
+    #embed the prompt with encoders
+    if EMBEDDING_TYPE == 'mini':
+        prompt_embedded, df_index = mini_lm_encode(prompt_df)
+        return prompt_embedded
+    if EMBEDDING_TYPE == 'bert':
+        prompt_embedded, df_index = bert_encode(prompt_df)
+        return prompt_embedded
+
 
 def merge_promt_with_favorits(prompt: str, favs: list) -> pd.DataFrame:
     prompt_embedded = embed_prompt(prompt)
@@ -48,22 +61,38 @@ def fit_model(n_neighbors: int = 10):
     '''
     fit the model
     '''
-    # get the embedded data
-    df_embedded = get_data("processed_data/data_embedded.csv")
+    if EMBEDDING_TYPE == 'mini':
+        # get the embedded data
+        df_embedded = get_data("processed_data/data_embedded.csv")
+
+    if EMBEDDING_TYPE == 'bert':
+        # get the embedded data
+        df_embedded = get_data("processed_data/")
     # fit the model with model.fit_n_nearest_neighbors
+
     fit_n_nearest_neighbors(n=n_neighbors, df_embedded=df_embedded)
 
-def predict(prompt: str = 'love story in sweden without happy ending', n_neighbors: int = 5) -> list:
+def predict(prompt: str = 'godfather movie with a lot of action', n_neighbors: int = 5) -> list:
+
     '''
     get the prompt and recommend movies based on it
     '''
     # get the embedded prompt
     prompt_embedded = embed_prompt(prompt)
+    #import ipdb; ipdb.set_trace()
 
-    # find the nearest neighbors with model.find_n_nearest_neighbors
-    recom_list = predict_n_nearest_neighbors(n_neighbors=n_neighbors, prompt_embedded=prompt_embedded)
-    # print(recom_list)
-    return recom_list
+    if SEARCH_TYPE == 'knn':
+        # find the nearest neighbors with model.find_n_nearest_neighbors
+        recom_list = predict_n_nearest_neighbors(n_neighbors=n_neighbors, prompt_embedded=prompt_embedded)
+        print(recom_list)
+        return recom_list
+
+    elif SEARCH_TYPE == 'cosine':
+        # recommend with cosine similarity
+        recom_list =  compute_cosine_sim(prompt)
+        print(recom_list)
+        return recom_list
+    else: print("hi")
 
 def call_api():
     url = 'http://localhost:8000/predict'

@@ -15,7 +15,8 @@ INSTANCE = os.environ.get("INSTANCE")
 GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY")
 # Get the parent folder of the current file (goes up 2 levels)
 PARENT_FOLDER_PATH = os.path.dirname(os.path.dirname(__file__))
-
+EMBEDDING_TYPE = os.environ.get("EMBEDDING_TYPE")
+SEARCH_TYPE = os.environ.get("SEARCH_TYPE")
 
 ##################  CONSTANTS  #####################
 LOCAL_DATA_PATH = os.path.join(os.path.expanduser('~'), ".lewagon", "project")
