@@ -37,8 +37,10 @@ def predict(
     """
     prompt_embedded = embed_prompt(prompt)
     final_prompt_embedded = prompt_embedded
+    #merge prompt with favorits:
     if len(fav_list) > 0:
         final_prompt_embedded = merge_promt_with_favorits(prompt_embedded, fav_list)
+    # predict
     distances, indices = app.state.model.kneighbors(final_prompt_embedded, n_neighbors=n_recom)
 
     # generate output list

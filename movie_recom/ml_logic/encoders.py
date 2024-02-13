@@ -71,5 +71,4 @@ def bert_encode(df: pd.DataFrame) -> pd.DataFrame:
     embedded_data.index = df_index
     # remove the index name (title of the index column)
     embedded_data.index.name = None
-
     return embedded_data, df_index
