@@ -1,75 +1,41 @@
 import numpy as np
 import pandas as pd
-# import embedding with sentence transformer
-from sentence_transformers import SentenceTransformer
 # import embedding with bert
 from transformers import AutoTokenizer, TFAutoModel
 # import embedding with tfidf
 from sklearn.feature_extraction.text import TfidfVectorizer
+from movie_recom.ml_logic.data import get_data
+from movie_recom.params import *
+import os
+import pickle
 
-def mini_lm_encode(df: pd.DataFrame) -> pd.DataFrame:
+def bert_encode(prompt: str) -> pd.DataFrame:
     '''
-    convert the plot_synopsis to a vector using the MiniLM model
-    input: df: pd.DataFrame
-    output: df_encoded: pd.DataFrame
-    title becomes the index
-    remaining columns dropped
-    '''
-    # instatiate the model
-    model = SentenceTransformer('all-MiniLM-L6-v2')
-    # make copy of df
-    df_encoded = df.copy()
-    #encode the plot_synopsis
-    df_encoded['plot_synopsis'] = df_encoded['plot_synopsis'].apply(lambda x : model.encode(x))
-    # remove the title column
-    df_index = df_encoded.pop('title')
-    # just keep the plot_synopsis, removes the remaining columns
-    df_encoded = df_encoded[['plot_synopsis']]
-    # plot_synopsis was just one column with a list of numbers, now it's a dataframe with each number in a separate column
-    df_encoded = pd.DataFrame(np.column_stack(list(zip(*df_encoded.values))))
-    # set the title as the index
-    df_encoded.index = df_index
-    # remove the index name (title of the index column)
-    df_encoded.index.name = None
-
-    return df_encoded, df_index
-
-def bert_encode(df: pd.DataFrame) -> pd.DataFrame:
-    '''
-    convert the plot_synopsis to a vector using bert-tiny
-    input: df: pd.DataFrame
-    output: df_encoded: pd.DataFrame
-    title becomes the index
-    remaining columns dropped
+    For NN:
+    convert the prompt to a vector using bert-tiny
+    input: prompt: str
+    output: df_encoded: pd.DataFrame (format compatible for NN)
     '''
 
     # instatiate the model
     model_name = "prajjwal1/bert-tiny"
-    model = TFAutoModel.from_pretrained(model_name, from_pt = True)
-    # instatiate model-specific tokenizer
     tokenizer = AutoTokenizer.from_pretrained(model_name)
-    # make copy of df
-    df_encoded = df.copy()
-    # remove the title column
-    df_index = df_encoded.pop('title')
-    # just keep the plot_synopsis, removes the remaining columns
-    df_encoded = df_encoded[['plot_synopsis']]
-    # convert to list for bert
-    data_to_embed = df_encoded['plot_synopsis'].tolist()
+    model = TFAutoModel.from_pretrained(model_name, from_pt = True)
 
     # Tokenize the text data
-    token_tensor = tokenizer(data_to_embed, padding='max_length', max_length= 500, truncation=True, return_tensors="tf")
+    token_tensor = tokenizer(prompt, max_length=500, truncation=True, return_tensors="tf")
     # Create input tensors
     input_tensor = token_tensor['input_ids']
     # Generate embeddings
     prediction = model.predict(input_tensor)
     # Process the embeddings as np
     embedded_data = prediction.last_hidden_state[:, 0, :]
-    embedded_data = pd.DataFrame(embedded_data)
+    embedded_data = pd.DataFrame(embedded_data, columns=[str(i) + "_" for i in range(0,128,1)])
 
-    # set the title as the index
-    embedded_data.index = df_index
-    # remove the index name (title of the index column)
-    embedded_data.index.name = None
+    return embedded_data
 
-    return embedded_data, df_index
+def tf_vectorize(text):
+    file_path = os.path.join(PARENT_FOLDER_PATH, "saved_models", 'tf_idf_vectorizer.pkl')
+    tf_idf_vectorizer = pickle.load(open(file_path, 'rb'))
+    user_tf_idf_vector = tf_idf_vectorizer.transform([text])
+    return user_tf_idf_vector
