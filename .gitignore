@@ -1,3 +1,6 @@
+raw_data
+processed_data
+saved_model
 .python-version
 .env
 
