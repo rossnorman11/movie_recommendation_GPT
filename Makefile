@@ -4,11 +4,11 @@ reinstall_package:
 	@pip uninstall -y movie_recom || :
 	@pip install -e .
 
-embedding:
-	python -c 'from movie_recom.interface.main import embed_data; embed_data()'
+data_embedding_with_mini:
+	python -c 'from movie_recom.interface.main import embed_data_with_mini; embed_data_with_mini()'
 
-fit_model:
-	python -c 'from movie_recom.interface.main import fit_model; fit_model()'
+fit_nearest_neighbors:
+	python -c 'from movie_recom.interface.main import fit_nearest_neighbors; fit_nearest_neighbors()'
 
 prediction:
 	python -c 'from movie_recom.interface.main import predict; predict()'
@@ -19,4 +19,4 @@ run_api:
 call_api:
 	python -c 'from movie_recom.interface.main import call_api; call_api()'
 
-run_all: embedding fit_model prediction
+run_all: prediction

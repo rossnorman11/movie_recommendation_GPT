@@ -12,7 +12,7 @@ from movie_recom.ml_logic.preprocessor import shorten_synopsis
 import requests
 
 
-def embed_data():
+def embed_data_with_mini():
     """
     load the data and shorten the synopsis
     embed the data
@@ -24,14 +24,14 @@ def embed_data():
     df = shorten_synopsis(max_len=500, df=df)
     # embed the synopsis with encoders and saves it
 
-    if EMBEDDING_TYPE == 'mini':
-        df_encoded, df_index = mini_lm_encode(df)
-        save_data(df_encoded, 'processed_data/data_mini_embedded.csv')
-        save_data(df_index, 'processed_data/data_titlenames.csv')
-    elif EMBEDDING_TYPE == 'bert':
-        df_encoded, df_index = bert_encode(df)
-        save_data(df_encoded, 'processed_data/data_bert_embedded.csv')
-        save_data(df_index, 'processed_data/data_titlenames.csv')
+    #if EMBEDDING_TYPE == 'mini':
+    df_encoded, df_index = mini_lm_encode(df)
+    save_data(df_encoded, 'processed_data/data_mini_embedded.csv')
+    save_data(df_index, 'processed_data/data_titlenames.csv')
+    # elif EMBEDDING_TYPE == 'bert':
+    #     df_encoded, df_index = bert_encode(df)
+    #     save_data(df_encoded, 'processed_data/data_bert_embedded.csv')
+    #     save_data(df_index, 'processed_data/data_titlenames.csv')
 
 
 def embed_prompt(prompt: str) -> pd.DataFrame:
@@ -64,7 +64,7 @@ def merge_promt_with_favorits(prompt_embedded: pd.DataFrame, favs: list) -> pd.D
     return prompt_embedded
 
 
-def fit_model(n_neighbors: int = 10):
+def fit_nearest_neighbors(n_neighbors: int = 10):
     '''
     fit the model
     '''
@@ -96,7 +96,7 @@ def predict(prompt: str = 'godfather movie with a lot of action', n_neighbors: i
 
     elif SEARCH_TYPE == 'cosine':
         # recommend with cosine similarity
-        recom_list =  compute_cosine_sim(prompt)
+        recom_list =  compute_cosine_sim(prompt_embedded)
         print(recom_list)
         return recom_list
     else: print("hi")
