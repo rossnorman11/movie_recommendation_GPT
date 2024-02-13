@@ -5,54 +5,23 @@ from pathlib import Path
 from colorama import Fore, Style
 
 from movie_recom.params import *
-from movie_recom.ml_logic.encoders import mini_lm_encode, bert_encode
-from movie_recom.ml_logic.data import get_data, save_data
-from movie_recom.ml_logic.model import fit_n_nearest_neighbors, predict_n_nearest_neighbors, compute_cosine_sim
-from movie_recom.ml_logic.preprocessor import shorten_synopsis
+from movie_recom.ml_logic.encoders import bert_encode, tf_vectorize
+from movie_recom.ml_logic.data import get_data
+from movie_recom.ml_logic.model import predict_NN, vector_cosine
+from movie_recom.ml_logic.preprocessor import create_output_NN
 import requests
-
-
-def embed_data_with_mini():
-    """
-    load the data and shorten the synopsis
-    embed the data
-    """
-    # get the data from data.get_raw_data
-    df = get_data("raw_data/mpst_full_data.csv")
-    # Process data
-    # shorten the synopsis with preprocessor.shorten_synopsis
-    df = shorten_synopsis(max_len=500, df=df)
-    # embed the synopsis with encoders and saves it
-
-    #if EMBEDDING_TYPE == 'mini':
-    df_encoded, df_index = mini_lm_encode(df)
-    save_data(df_encoded, 'processed_data/data_mini_embedded.csv')
-    save_data(df_index, 'processed_data/data_titlenames.csv')
-    # elif EMBEDDING_TYPE == 'bert':
-    #     df_encoded, df_index = bert_encode(df)
-    #     save_data(df_encoded, 'processed_data/data_bert_embedded.csv')
-    #     save_data(df_index, 'processed_data/data_titlenames.csv')
-
 
 def embed_prompt(prompt: str) -> pd.DataFrame:
     """
     embed the prompt
     """
-    #put it into a dataframe
-    prompt_df = pd.DataFrame({'title': ['prompt'], 'plot_synopsis': [prompt]})
-
-
-    #embed the prompt with encoders
-    if EMBEDDING_TYPE == 'mini':
-        prompt_embedded, df_index = mini_lm_encode(prompt_df)
-        return prompt_embedded
-    if EMBEDDING_TYPE == 'bert':
-        prompt_embedded, df_index = bert_encode(prompt_df)
-        return prompt_embedded
-
+    #put it into a dataframe for NN
+    prompt_embedded = bert_encode(prompt)
+    return prompt_embedded
 
 def merge_promt_with_favorits(prompt_embedded: pd.DataFrame, favs: list) -> pd.DataFrame:
     # get the embedded data
+    # TODO: Adjust to latest models
     if EMBEDDING_TYPE == 'mini':
         df_embedded = get_data('processed_data/data_mini_embedded.csv')
         df_filtered = df_embedded[df_embedded.index.isin(favs)] # embedded dataframe with just the favorites
@@ -63,43 +32,34 @@ def merge_promt_with_favorits(prompt_embedded: pd.DataFrame, favs: list) -> pd.D
         return mean_df
     return prompt_embedded
 
+def find_recommendation_vector(text):
+    # Vectorise user input
+    vectorized_prompt = tf_vectorize(text)
+    #return dataframe with movie recommendations and similarity score
+    return vector_cosine(vectorized_prompt)
 
-def fit_nearest_neighbors(n_neighbors: int = 10):
-    '''
-    fit the model
-    '''
-
-    if EMBEDDING_TYPE == 'mini':
-        # get the embedded data
-        df_embedded = get_data("processed_data/data_mini_embedded.csv")
-        fit_n_nearest_neighbors(n=n_neighbors, df_embedded=df_embedded)
-    if EMBEDDING_TYPE == 'bert':
-        # get the embedded data
-        df_embedded = get_data("processed_data/data_bert_embedded.csv")
-        # fit the model with model.fit_n_nearest_neighbors
-        fit_n_nearest_neighbors(n=n_neighbors, df_embedded=df_embedded)
-
-def predict(prompt: str = 'godfather movie with a lot of action', n_neighbors: int = 5) -> list:
+def predict(prompt: str = 'drug addict getting his life back on track') -> list:
 
     '''
     get the prompt and recommend movies based on it
     '''
     # get the embedded prompt
+
+    # recommend with cosine similarity
+    recom_list =  find_recommendation_vector(prompt)
+
     prompt_embedded = embed_prompt(prompt)
-    #import ipdb; ipdb.set_trace()
+    pred_ratings = predict_NN(prompt_embedded)
+    pred_recommendations = create_output_NN(pred_ratings)
 
-    if SEARCH_TYPE == 'knn':
-        # find the nearest neighbors with model.find_n_nearest_neighbors
-        recom_list = predict_n_nearest_neighbors(n_neighbors=n_neighbors, prompt_embedded=prompt_embedded)
-        print(recom_list)
-        return recom_list
+    combined = pd.merge(left=pred_recommendations, right=recom_list, left_index=True, right_on='title', how='left')
+    combined['sum'] = combined['rating'] + 3*combined['similarity']
 
-    elif SEARCH_TYPE == 'cosine':
-        # recommend with cosine similarity
-        recom_list =  compute_cosine_sim(prompt_embedded)
-        print(recom_list)
-        return recom_list
-    else: print("hi")
+    recommendations = combined.sort_values(by='sum', ascending=False)[0:5]
+
+    print(recommendations)
+
+    return recommendations
 
 def call_api():
     url = 'http://localhost:8000/predict'
