@@ -16,9 +16,8 @@ def embed_prompt(prompt: str) -> pd.DataFrame:
     embed the prompt
     """
     #put it into a dataframe for NN
-    if EMBEDDING_TYPE == 'bert':
-        prompt_embedded = bert_encode(prompt)
-        return prompt_embedded
+    prompt_embedded = bert_encode(prompt)
+    return prompt_embedded
 
 def merge_promt_with_favorits(prompt_embedded: pd.DataFrame, favs: list) -> pd.DataFrame:
     # get the embedded data
@@ -39,27 +38,28 @@ def find_recommendation_vector(text):
     #return dataframe with movie recommendations and similarity score
     return vector_cosine(vectorized_prompt)
 
-def predict(prompt: str = 'Love story in England without happy ending', n_neighbors: int = 5) -> list:
+def predict(prompt: str = 'drug addict getting his life back on track') -> list:
 
     '''
     get the prompt and recommend movies based on it
     '''
     # get the embedded prompt
 
-    #import ipdb; ipdb.set_trace()
+    # recommend with cosine similarity
+    recom_list =  find_recommendation_vector(prompt)
 
-    if SEARCH_TYPE == 'cosine':
-        # recommend with cosine similarity
-        recom_list =  find_recommendation_vector(prompt)
-        print(recom_list)
-        return recom_list
+    prompt_embedded = embed_prompt(prompt)
+    pred_ratings = predict_NN(prompt_embedded)
+    pred_recommendations = create_output_NN(pred_ratings)
 
-    if SEARCH_TYPE == "NN":
-        prompt_embedded = embed_prompt(prompt)
-        pred_ratings = predict_NN(prompt_embedded)
-        pred_recommendations = create_output_NN(pred_ratings)
-        print(pred_recommendations)
-        return pred_recommendations
+    combined = pd.merge(left=pred_recommendations, right=recom_list, left_index=True, right_on='title', how='left')
+    combined['sum'] = combined['rating'] + 3*combined['similarity']
+
+    recommendations = combined.sort_values(by='sum', ascending=False)[0:5]
+
+    print(recommendations)
+
+    return recommendations
 
 def call_api():
     url = 'http://localhost:8000/predict'

@@ -19,9 +19,8 @@ def bert_encode(prompt: str) -> pd.DataFrame:
 
     # instatiate the model
     model_name = "prajjwal1/bert-tiny"
-    model = TFAutoModel.from_pretrained(model_name, from_pt = True)
-    # instatiate model-specific tokenizer
     tokenizer = AutoTokenizer.from_pretrained(model_name)
+    model = TFAutoModel.from_pretrained(model_name, from_pt = True)
 
     # Tokenize the text data
     token_tensor = tokenizer(prompt, max_length=500, truncation=True, return_tensors="tf")
