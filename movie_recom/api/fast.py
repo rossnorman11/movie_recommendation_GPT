@@ -22,14 +22,15 @@ app.add_middleware(
 def predict(
         prompt: str,
         fav_list,
-        weight_n: float
+        weight_n: float,
+        weight_fav: float
     ):
     """
     gives a list of n_recom recommendations based on the prompt
     """
     # generate output list
 
-    movie_list = predict_movie(prompt, fav_list.split("_"), float(weight_n))
+    movie_list = predict_movie(prompt, fav_list.split("_"), float(weight_n), float(weight_fav))
     # load list of titles
 
     return {"Our recommendation is": movie_list}
