@@ -2,7 +2,6 @@ import numpy as np
 import pandas as pd
 
 from pathlib import Path
-from colorama import Fore, Style
 
 from movie_recom.params import *
 from movie_recom.ml_logic.encoders import bert_encode, tf_vectorize
@@ -19,9 +18,8 @@ def embed_prompt(prompt: str) -> pd.DataFrame:
     prompt_embedded = bert_encode(prompt)
     return prompt_embedded
 
-def merge_prompt_with_favorites(prompt_embedded: pd.DataFrame, favs: list) -> pd.DataFrame:
+def merge_prompt_with_favorites(prompt_vector, prompt_bert: pd.DataFrame, favs: list) -> pd.DataFrame:
     # get the embedded data
-    # TODO: Adjust to latest models
     # Load titles
     filepath_title = Path(PARENT_FOLDER_PATH).joinpath("raw_data/movie_title.pkl")
     titles = pd.read_pickle(filepath_title)
@@ -31,10 +29,11 @@ def merge_prompt_with_favorites(prompt_embedded: pd.DataFrame, favs: list) -> pd
     plot_embedded = pd.DataFrame(np.load(filepath_plot), columns=[str(i) for i in range(0,128,1)], index = titles.values)
 
     df_filtered = plot_embedded[plot_embedded.index.isin(favs)] # embedded dataframe with just the favorites
-    series = prompt_embedded.iloc[0,:] # convert the prompt dataframe to a series
+    series = prompt_bert.iloc[0,:] # convert the prompt dataframe to a series
     df_filtered.loc['prompt'] = series.to_list() # add the prompt to the dataframe (concat didnt work well)
     mean_df = df_filtered.mean(axis=0).to_frame().T # get the mean of the dataframe, keep it as dataframe
     mean_df.index = ['prompt'] # set the index to 'prompt'
+
     return mean_df
 
 def find_recommendation_vector(text):
