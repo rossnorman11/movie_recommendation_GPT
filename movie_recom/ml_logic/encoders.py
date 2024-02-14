@@ -1,10 +1,7 @@
-import numpy as np
 import pandas as pd
 # import embedding with bert
 from transformers import AutoTokenizer, TFAutoModel
 # import embedding with tfidf
-from sklearn.feature_extraction.text import TfidfVectorizer
-from movie_recom.ml_logic.data import get_data
 from movie_recom.params import *
 import os
 import pickle

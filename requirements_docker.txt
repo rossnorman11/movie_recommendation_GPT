@@ -1,0 +1,11 @@
+tensorflow==2.15.0
+transformers==4.37.2
+torch
+numpy
+pandas
+scikit-learn
+python-multipart
+
+# API
+fastapi         # API framework
+uvicorn         # web server
