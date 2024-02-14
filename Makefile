@@ -34,7 +34,7 @@ docker_cloud:
 	--location=${GCP_REGION} --description="Repository for storing movie_recom images"
 
 docker_build_cloud:
-	docker push ${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT}/taxifare/${GAR_IMAGE}:prod
+	docker build -t  ${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT}/movierecom/${GAR_IMAGE}:prod .
 
 docker_push:
 	docker push ${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT}/movierecom/${GAR_IMAGE}:prod
