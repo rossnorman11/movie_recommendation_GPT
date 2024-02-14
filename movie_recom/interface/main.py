@@ -5,10 +5,8 @@ from pathlib import Path
 
 from movie_recom.params import *
 from movie_recom.ml_logic.encoders import bert_encode, tf_vectorize
-from movie_recom.ml_logic.data import get_data
 from movie_recom.ml_logic.model import predict_NN, vector_cosine
 from movie_recom.ml_logic.preprocessor import create_output_NN
-import requests
 
 def embed_prompt(prompt: str) -> pd.DataFrame:
     """
@@ -18,7 +16,7 @@ def embed_prompt(prompt: str) -> pd.DataFrame:
     prompt_embedded = bert_encode(prompt)
     return prompt_embedded
 
-def merge_prompt_with_favorites(prompt_vector, prompt_bert: pd.DataFrame, favs: list) -> pd.DataFrame:
+def merge_prompt_with_favorites(prompt_bert: pd.DataFrame, favs: list) -> pd.DataFrame:
     # get the embedded data
     # Load titles
     filepath_title = Path(PARENT_FOLDER_PATH).joinpath("raw_data/movie_title.pkl")
@@ -69,21 +67,7 @@ def predict(prompt: str = 'drug addict getting his life back on track', fav_list
 
     return recommendations['title'].tolist()
 
-def call_api():
-    url = 'http://localhost:8000/predict'
 
-    params = {
-        'prompt': 'Love story in England without happy ending', # 0 for Sunday, 1 for Monday, ...
-        'n_recom': 7
-    }
-
-    response = requests.get(url, params=params)
-    response.json() #=> {wait: 64}
-    # print(response.json())
-
-def test():
-    pass
 
 if __name__ == '__main__':
     pass
-    # test()

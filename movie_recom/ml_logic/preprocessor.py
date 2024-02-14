@@ -2,7 +2,6 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 from movie_recom.params import *
-import pickle
 
 def shorten_synopsis(max_len: int, df: pd.DataFrame) -> pd.DataFrame:
     '''

@@ -1,10 +1,8 @@
 import pandas as pd
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from movie_recom.interface.main import embed_prompt, merge_prompt_with_favorites, predict
-from pathlib import Path
+from movie_recom.interface.main import predict
 from movie_recom.params import *
-import pickle
 
 app = FastAPI()
 #load pickle model

@@ -1,12 +1,9 @@
-import numpy as np
 import pandas as pd
 import pickle
 from pathlib import Path
 from movie_recom.params import *
-from transformers import AutoTokenizer, AutoModel
 from sklearn.metrics.pairwise import cosine_similarity
 from movie_recom.ml_logic.preprocessor import create_input_NN
-from movie_recom.ml_logic.data import get_data
 
 ####################################
 ###     COSINE SIMILIRATY        ###
