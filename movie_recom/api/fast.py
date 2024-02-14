@@ -1,19 +1,14 @@
 import pandas as pd
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from movie_recom.interface.main import embed_prompt, merge_promt_with_favorits
+from movie_recom.interface.main import embed_prompt, merge_prompt_with_favorites, predict
 from pathlib import Path
 from movie_recom.params import *
 import pickle
 
 app = FastAPI()
 #load pickle model
-# Get the parent folder of the current file (goes up 2 levels)
-parent_folder_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-# Define the path and foldername to save the data
-model_path = Path(parent_folder_path).joinpath("saved_models/nbrs.pkl")
-with open(model_path, 'rb') as f:
-    app.state.model = pickle.load(f)
+
 
 
 # Allowing all middleware is optional, but good practice for dev purposes
@@ -29,26 +24,18 @@ app.add_middleware(
 @app.get("/predict")
 def predict(
         prompt: str = "drug addict in america looking for work", # prompt
-        n_recom: int = 5, # number of recommendations
-        fav_list: list = [] # list of favorite movies
+        fav_list: list=[],
+        weight_n: float=0.5
     ):
     """
     gives a list of n_recom recommendations based on the prompt
     """
-    prompt_embedded = embed_prompt(prompt)
-    final_prompt_embedded = prompt_embedded
-    if len(fav_list) > 0:
-        final_prompt_embedded = merge_promt_with_favorits(prompt_embedded, fav_list)
-    distances, indices = app.state.model.kneighbors(final_prompt_embedded, n_neighbors=n_recom)
-
     # generate output list
+
+    movie_list = predict(prompt, fav_list, weight_n)
     # load list of titles
-    filepath = Path(PARENT_FOLDER_PATH).joinpath("processed_data/data_titlenames.csv")
-    df_titles = pd.read_csv(filepath, index_col=0)
-    list_of_titles = []
-    for index in indices[0][0:]:
-        list_of_titles.append(df_titles.iloc[index][0])
-    return {"Our recommendation is": list_of_titles}
+
+    return {"Our recommendation is": movie_list}
 
 
 @app.get("/")

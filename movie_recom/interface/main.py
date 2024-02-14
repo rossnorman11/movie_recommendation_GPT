@@ -42,7 +42,7 @@ def find_recommendation_vector(text):
     #return dataframe with movie recommendations and similarity score
     return vector_cosine(vectorized_prompt)
 
-def predict(prompt: str = 'drug addict getting his life back on track') -> list:
+def predict(prompt: str = 'drug addict getting his life back on track', fav_list: list=[], weight_n: float=0.5) -> list:
 
     '''
     get the prompt and recommend movies based on it
@@ -53,17 +53,21 @@ def predict(prompt: str = 'drug addict getting his life back on track') -> list:
     recom_list =  find_recommendation_vector(prompt)
 
     prompt_embedded = embed_prompt(prompt)
-    pred_ratings = predict_NN(prompt_embedded)
+
+    final_prompt_embedded = prompt_embedded
+    if len(fav_list) > 0:
+        final_prompt_embedded = merge_prompt_with_favorites(prompt_embedded, fav_list)
+
+    pred_ratings = predict_NN(final_prompt_embedded)
     pred_recommendations = create_output_NN(pred_ratings)
 
     combined = pd.merge(left=pred_recommendations, right=recom_list, left_index=True, right_on='title', how='left')
-    combined['sum'] = combined['rating'] + 3*combined['similarity']
+    combined['sum'] = weight_n * 2 * combined['rating'] + (1 - weight_n) * 6 * combined['similarity']
 
-    recommendations = combined.sort_values(by='sum', ascending=False)[0:5]
+    recommendations = combined.sort_values(by='sum', ascending=False)[0:50]
 
-    print(recommendations)
 
-    return recommendations
+    return recommendations['title'].tolist()
 
 def call_api():
     url = 'http://localhost:8000/predict'

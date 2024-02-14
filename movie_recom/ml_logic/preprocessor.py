@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-from colorama import Fore, Style
 from pathlib import Path
 from movie_recom.params import *
 import pickle
