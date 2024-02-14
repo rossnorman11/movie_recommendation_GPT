@@ -22,12 +22,22 @@ call_api:
 run_all:
 	prediction
 
-docker_build:
-	docker build --tag=$GAR_IMAGE:dev .
+docker_build_local:
+	docker build --tag=${GAR_IMAGE}:dev .
 
+docker_run:
+	docker run -it -e PORT=8000 -p 8000:8000 ${GAR_IMAGE}:dev sh
+
+docker_cloud:
+	gcloud auth configure-docker ${GCP_REGION}-docker.pkg.dev
+	gcloud artifacts repositories create movierecom --repository-format=docker \
+	--location=${GCP_REGION} --description="Repository for storing movie_recom images"
+
+docker_build_cloud:
+	docker push ${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT}/taxifare/${GAR_IMAGE}:prod
 
 docker_push:
 	docker push europe-west1-docker.pkg.dev/${GCP_PROJECT}/movierecom/${GAR_IMAGE}:prod
 
 docker_deploy:
-	gcloud run deploy --image europe-west1-docker.pkg.dev/${GCP_PROJECT}/taxifare/${GAR_IMAGE}:prod --cpus ${GAR_CPU} --memory ${GAR_MEMORY} --region europe-west1--env-vars-file .env.yaml
+	gcloud run deploy --image ${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT}/taxifare/${GAR_IMAGE}:prod --cpus ${GAR_CPU} --memory ${GAR_MEMORY} --region ${GCP_REGION}--env-vars-file .env.yaml
