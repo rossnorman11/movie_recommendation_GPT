@@ -1,4 +1,6 @@
-transformers
+tensorflow==2.15.0
+transformers==4.37.2
+torch
 numpy
 pandas
 scikit-learn

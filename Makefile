@@ -19,4 +19,15 @@ run_api:
 call_api:
 	python -c 'from movie_recom.interface.main import call_api; call_api()'
 
-run_all: prediction
+run_all:
+	prediction
+
+docker_build:
+	docker build --tag=$GAR_IMAGE:dev .
+
+
+docker_push:
+	docker push europe-west1-docker.pkg.dev/${GCP_PROJECT}/movierecom/${GAR_IMAGE}:prod
+
+docker_deploy:
+	gcloud run deploy --image europe-west1-docker.pkg.dev/${GCP_PROJECT}/taxifare/${GAR_IMAGE}:prod --cpus ${GAR_CPU} --memory ${GAR_MEMORY} --region europe-west1--env-vars-file .env.yaml

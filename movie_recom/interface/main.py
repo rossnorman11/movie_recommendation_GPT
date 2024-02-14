@@ -40,7 +40,7 @@ def find_recommendation_vector(text):
     #return dataframe with movie recommendations and similarity score
     return vector_cosine(vectorized_prompt)
 
-def predict(prompt: str = 'drug addict getting his life back on track', fav_list: list=[], weight_n: float=0.0) -> list:
+def predict_movie(prompt: str = 'drug addict getting his life back on track', fav_list: list=[], weight_n: float=0.0) -> list:
 
     '''
     get the prompt and recommend movies based on it
