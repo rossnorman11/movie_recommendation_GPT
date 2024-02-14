@@ -1,7 +1,7 @@
 import pandas as pd
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from movie_recom.interface.main import embed_prompt, merge_prompt_with_favorites, predict
+from movie_recom.interface.main import embed_prompt, merge_prompt_with_favorites, predict_movie
 from pathlib import Path
 from movie_recom.params import *
 import pickle
@@ -18,18 +18,18 @@ app.add_middleware(
     allow_headers=["*"],  # Allows all headers
 )
 
-@app.post("/predict")
+@app.get("/predict")
 def predict(
-        prompt: str = "drug addict in america looking for work", # prompt
-        fav_list: list=[],
-        weight_n: float=0.5
+        prompt: str,
+        fav_list,
+        weight_n: float
     ):
     """
     gives a list of n_recom recommendations based on the prompt
     """
     # generate output list
 
-    movie_list = predict(prompt, fav_list, weight_n)
+    movie_list = predict_movie(prompt, fav_list.split("_"), float(weight_n))
     # load list of titles
 
     return {"Our recommendation is": movie_list}

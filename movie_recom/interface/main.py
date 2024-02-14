@@ -18,7 +18,7 @@ def embed_prompt(prompt: str) -> pd.DataFrame:
     prompt_embedded = bert_encode(prompt)
     return prompt_embedded
 
-def merge_prompt_with_favorites(prompt_vector, prompt_bert: pd.DataFrame, favs: list) -> pd.DataFrame:
+def merge_prompt_with_favorites(prompt_bert: pd.DataFrame, favs: list) -> pd.DataFrame:
     # get the embedded data
     # Load titles
     filepath_title = Path(PARENT_FOLDER_PATH).joinpath("raw_data/movie_title.pkl")
@@ -42,7 +42,7 @@ def find_recommendation_vector(text):
     #return dataframe with movie recommendations and similarity score
     return vector_cosine(vectorized_prompt)
 
-def predict(prompt: str = 'drug addict getting his life back on track', fav_list: list=[], weight_n: float=0.5) -> list:
+def predict_movie(prompt: str = 'drug addict getting his life back on track', fav_list: list=[], weight_n: float=0.5) -> list:
 
     '''
     get the prompt and recommend movies based on it
