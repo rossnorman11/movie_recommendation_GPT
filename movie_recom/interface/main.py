@@ -51,7 +51,6 @@ def predict_movie(prompt: str = 'drug addict getting his life back on track', fa
     '''
     get the prompt and recommend movies based on it
     '''
-    # get the embedded prompt
 
     # recommend with cosine similarity
     recom_list =  find_recommendation_vector(prompt)
