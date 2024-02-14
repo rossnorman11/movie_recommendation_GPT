@@ -1,5 +1,4 @@
 import pandas as pd
-from colorama import Fore, Style
 from movie_recom.params import *
 from pathlib import Path
 
