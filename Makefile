@@ -40,4 +40,4 @@ docker_push:
 	docker push ${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT}/movierecom/${GAR_IMAGE}:prod
 
 docker_deploy:
-	gcloud run deploy --image ${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT}/taxifare/${GAR_IMAGE}:prod --cpus ${GAR_CPU} --memory ${GAR_MEMORY} --region ${GCP_REGION}--env-vars-file .env.yaml
+	gcloud run deploy --image ${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT}/movierecom/${GAR_IMAGE}:prod --cpu ${GAR_CPU} --memory ${GAR_MEMORY} --region ${GCP_REGION}
