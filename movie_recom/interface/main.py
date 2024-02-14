@@ -5,10 +5,8 @@ from pathlib import Path
 
 from movie_recom.params import *
 from movie_recom.ml_logic.encoders import bert_encode, tf_vectorize
-from movie_recom.ml_logic.data import get_data
 from movie_recom.ml_logic.model import predict_NN, vector_cosine
 from movie_recom.ml_logic.preprocessor import create_output_NN
-import requests
 
 def embed_prompt(prompt: str) -> pd.DataFrame:
     """
@@ -74,10 +72,5 @@ def predict(prompt: str = 'drug addict getting his life back on track', fav_list
     return recommendations['title'].tolist()
 
 
-
-def test():
-    pass
-
 if __name__ == '__main__':
     pass
-    # test()

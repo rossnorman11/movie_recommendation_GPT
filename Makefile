@@ -11,7 +11,7 @@ fit_nearest_neighbors:
 	python -c 'from movie_recom.interface.main import fit_nearest_neighbors; fit_nearest_neighbors()'
 
 prediction:
-	python -c 'from movie_recom.interface.main import predict; predict()'
+	python -c 'from movie_recom.interface.main import predict_movie; predict_movie()'
 
 run_api:
 	uvicorn movie_recom.api.fast:app --reload

@@ -3,7 +3,7 @@ from setuptools import setup
 from setuptools import find_packages
 
 # list dependencies from file
-with open('requirements.txt') as f:
+with open('requirements_docker.txt') as f:
     content = f.readlines()
 requirements = [x.strip() for x in content]
 

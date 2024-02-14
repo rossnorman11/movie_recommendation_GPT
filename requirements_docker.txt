@@ -1,0 +1,9 @@
+transformers
+numpy
+pandas
+scikit-learn
+python-multipart
+
+# API
+fastapi         # API framework
+uvicorn         # web server
