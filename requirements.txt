@@ -2,7 +2,6 @@ tqdm>=4.62.2
 sentence-transformers
 transformers
 TensorFlow  # necessary?
-colorama
 pandas
 scikit-learn
 python-multipart
