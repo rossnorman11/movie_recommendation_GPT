@@ -3,7 +3,6 @@ processed_data
 saved_model
 .python-version
 .env
-.env.yaml
 .env.sample
 
 # OS generated files #
