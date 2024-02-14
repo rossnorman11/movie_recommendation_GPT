@@ -1,5 +1,6 @@
-raw_data/
-processed_data/
+raw_data
+processed_data
+saved_model
 .python-version
 .env
 
@@ -15,10 +16,13 @@ movie_recom/__pycache__
 movie_recom/interface/__pycache__
 movie_recom/ml_logic/__pycache__
 movie_recom/api/__pycache__
+movie_recom/notebooks/llama.bin
+movie_recom/notebooks/llama.bin
 *.pyc
 *checkpoint.ipynb
+*.ipynb:Zone.Identifier
 *.ipynb_checkpoints
-
+movie_recom/notebooks/test.ipynb
 # inteliJ #
 .idea
 *.gz
