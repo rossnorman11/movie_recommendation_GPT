@@ -4,6 +4,7 @@ saved_model
 .python-version
 .env
 .env.sample
+.env.yaml
 
 # OS generated files #
 ######################
