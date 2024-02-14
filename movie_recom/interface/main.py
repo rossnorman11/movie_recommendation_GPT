@@ -18,7 +18,7 @@ def embed_prompt(prompt: str) -> pd.DataFrame:
     prompt_embedded = bert_encode(prompt)
     return prompt_embedded
 
-def merge_prompt_with_favorites(prompt_vector, prompt_bert: pd.DataFrame, favs: list) -> pd.DataFrame:
+def merge_prompt_with_favorites(prompt_bert: pd.DataFrame, favs: list) -> pd.DataFrame:
     # get the embedded data
     # Load titles
     filepath_title = Path(PARENT_FOLDER_PATH).joinpath("raw_data/movie_title.pkl")
@@ -58,7 +58,7 @@ def predict(prompt: str = 'drug addict getting his life back on track', fav_list
     if weight_n > 0: # dont call bert and NN if weight_n is 0
         prompt_embedded = embed_prompt(prompt)
         final_prompt_embedded = prompt_embedded
-        if len(fav_list) > 0:
+        if fav_list is not ['']:
             final_prompt_embedded = merge_prompt_with_favorites(prompt_embedded, fav_list)
         pred_ratings = predict_NN(final_prompt_embedded)
         pred_recommendations = create_output_NN(pred_ratings)
