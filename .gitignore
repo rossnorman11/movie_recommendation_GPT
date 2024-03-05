@@ -4,6 +4,8 @@ saved_model
 .python-version
 .env
 
+maxtest
+
 
 # OS generated files #
 ######################
